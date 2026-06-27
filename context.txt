@@ -1,5 +1,5 @@
 ================================================================================
-  VOUCHER2 — PROJECT CONTEXT
+  VOUCHER2 - PROJECT CONTEXT
   Interledger Hackathon 2026
   Last updated: June 2026
 ================================================================================
@@ -12,7 +12,7 @@ Voucher2 is a web app that lets users pay at South African retailers using a
 combination of store gift vouchers and an Interledger (ILP) wallet. The core
 idea: if your Checkers voucher has R80 and you're buying R120 worth of groceries,
 the app auto-combines your voucher(s) and tops up the R40 shortfall via an ILP
-Open Payments transaction — all in one checkout flow.
+Open Payments transaction - all in one checkout flow.
 
 Key concepts:
 - Vouchers are provider-specific: a Checkers voucher can only be used at Checkers.
@@ -135,7 +135,7 @@ posts + post_unlocks  ← web monetization demo, not core to voucher feature
 
 
 ────────────────────────────────────────────────────────────────────────────────
-  VOUCHER POOL — DEMO CODES (seeded on first boot)
+  VOUCHER POOL - DEMO CODES (seeded on first boot)
 ────────────────────────────────────────────────────────────────────────────────
 
 All pool vouchers have user_id = NULL until a user loads them.
@@ -207,14 +207,14 @@ Health
 
 
 ────────────────────────────────────────────────────────────────────────────────
-  PAY FLOW — HOW IT WORKS END TO END
+  PAY FLOW - HOW IT WORKS END TO END
 ────────────────────────────────────────────────────────────────────────────────
 
-Step 1 — Merchant picker (payView.ts, step-dot 1)
+Step 1 - Merchant picker (payView.ts, step-dot 1)
   User sees a grid of merchant tiles (Checkers, Woolworths, etc.).
   Tapping one moves to Step 2.
 
-Step 2 — Amount entry (payView.ts, step-dot 2)
+Step 2 - Amount entry (payView.ts, step-dot 2)
   Shows only the user's loaded vouchers for the selected merchant with total.
   If no matching vouchers: shows a warning, full amount goes via ILP wallet.
   User enters purchase amount in ZAR and clicks "Get breakdown →".
@@ -228,7 +228,7 @@ Backend /quote logic:
   - Returns: { requiresTopUp, voucherCovers, topUpCents, merchant,
                contributions[], transactionId, quote }
 
-Step 3 — Breakdown + authorise (payConsentView.ts, step-dot 2→3)
+Step 3 - Breakdown + authorise (payConsentView.ts, step-dot 2→3)
   Shows the split: each voucher contribution + ILP top-up (if needed).
   If voucher-only → "Confirm" → voucher deducted → #/pay-success.
   If top-up needed → "Authorise" → calls POST /api/remit/consent
@@ -239,11 +239,11 @@ GNAP callback → /api/callback
   Backend continues grant, creates outgoing payment, marks transaction COMPLETED.
   Redirects browser to frontend /?status=completed&id=<txId>.
   NOTE: voucher deduction for the top-up path happens in /api/pay/confirm
-        which should be called by the callback handler (TODO: not yet wired —
+        which should be called by the callback handler (TODO: not yet wired -
         the callback currently only completes the ILP transaction but does not
         call /api/pay/confirm to deduct vouchers for the top-up path).
 
-Step 4 — Status polling (statusView.ts)
+Step 4 - Status polling (statusView.ts)
   Frontend polls GET /api/remit/status/:id every 2s until COMPLETED/FAILED/expired.
 
 
@@ -252,7 +252,7 @@ Step 4 — Status polling (statusView.ts)
 ────────────────────────────────────────────────────────────────────────────────
 
 Environment: Interledger TEST network (https://wallet.interledger-test.dev)
-             Play money only — no real funds.
+             Play money only - no real funds.
 
 backend/.env variables:
   OP_WALLET_ADDRESS   = $ilp.interledger-test.dev/ebba754   (EUR wallet, the app's signing wallet)
@@ -283,8 +283,8 @@ Payment direction:
   #/login         Login form
   #/signup        Signup form
   #/profile       Edit profile, set wallet address, upload avatar
-  #/vouchers      MY VOUCHERS — view loaded vouchers + load new ones
-  #/pay           PAY FLOW — merchant picker → amount → breakdown → authorise
+  #/vouchers      MY VOUCHERS - view loaded vouchers + load new ones
+  #/pay           PAY FLOW - merchant picker → amount → breakdown → authorise
   #/pay-consent   Breakdown/authorise screen (reached via pay flow state)
   #/pay-success   Voucher-only payment success
   #/history       Transaction history table
@@ -298,7 +298,7 @@ Payment direction:
 1. VOUCHER DEDUCTION AFTER ILP TOP-UP NOT WIRED
    When a payment requires an ILP top-up, the voucher balances need to be
    deducted AFTER the outgoing payment completes (in /api/callback).
-   Currently the callback does NOT call /api/pay/confirm — so voucher balances
+   Currently the callback does NOT call /api/pay/confirm - so voucher balances
    are not reduced when the top-up path is used. The no-top-up path works
    correctly (deducted in /quote). This is the next thing to fix.
 
