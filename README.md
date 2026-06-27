@@ -1,21 +1,21 @@
 # Voucher2
 
-> Pay with gift card vouchers — top up via the Interledger network when the balance runs short.
+> Pay with gift card vouchers - top up via the Interledger network when the balance runs short.
 
 Voucher2 is a TypeScript monorepo built on top of the [Open Payments](https://openpayments.dev) protocol. It combines a voucher-redemption system (think retail gift cards) with ILP-powered top-up payments: the user enters a voucher code, the backend deducts as much as the voucher covers, and if the purchase amount exceeds the balance it triggers an Open Payments flow to cover the remainder from the user's ILP wallet.
 
-The project also ships a full peer-to-peer remittance flow, payment requests ("asks"), and a Web Monetization-powered news paywall ("The Ledger") — all useful reference implementations for hackathon exploration.
+The project also ships a full peer-to-peer remittance flow, payment requests ("asks"), and a Web Monetization-powered news paywall ("The Ledger") - all useful reference implementations for hackathon exploration.
 
 ---
 
 ## Features
 
-- **Voucher redemption** — enter a gift card code, see the remaining balance, and pay for purchases. The voucher covers as much as it can; any shortfall is topped up via Open Payments.
-- **Hybrid payment flow** — if `topUpCents > 0` the normal GNAP consent → callback pipeline runs, then the voucher balance is deducted atomically after the ILP payment lands. If the voucher fully covers the purchase, no wallet interaction is needed.
-- **Peer-to-peer remittance** — send money between ILP wallet addresses with a full quote → consent → callback flow.
-- **Payment requests** — request money from another user (`FIXED_SEND` or `FIXED_RECEIVE`). The payer fulfils through the same quote flow.
-- **The Ledger (news paywall)** — monetised articles unlocked by Web Monetization streaming or a one-off Open Payments fallback.
-- **User accounts** — JWT auth, profiles with wallet address and avatar, user search.
+- **Voucher redemption** - enter a gift card code, see the remaining balance, and pay for purchases. The voucher covers as much as it can; any shortfall is topped up via Open Payments.
+- **Hybrid payment flow** - if `topUpCents > 0` the normal GNAP consent → callback pipeline runs, then the voucher balance is deducted atomically after the ILP payment lands. If the voucher fully covers the purchase, no wallet interaction is needed.
+- **Peer-to-peer remittance** - send money between ILP wallet addresses with a full quote → consent → callback flow.
+- **Payment requests** - request money from another user (`FIXED_SEND` or `FIXED_RECEIVE`). The payer fulfils through the same quote flow.
+- **The Ledger (news paywall)** - monetised articles unlocked by Web Monetization streaming or a one-off Open Payments fallback.
+- **User accounts** - JWT auth, profiles with wallet address and avatar, user search.
 
 ---
 
@@ -85,7 +85,7 @@ Open [http://localhost:5173](http://localhost:5173).
                             │
                             │  [topUpCents = 0]
                             └─ deduct voucher, return { requiresTopUp: false }
-                               ↑ done — no wallet interaction needed
+                               ↑ done - no wallet interaction needed
                             │
                             │  [topUpCents > 0]
                             ├─ walletAddress.get()   ──► Resolve wallets
@@ -134,8 +134,8 @@ All routes require a `Bearer` JWT token.
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/api/auth/signup` | Register — returns `{ token, user }` |
-| `POST` | `/api/auth/login` | Login — returns `{ token, user }` |
+| `POST` | `/api/auth/signup` | Register - returns `{ token, user }` |
+| `POST` | `/api/auth/login` | Login - returns `{ token, user }` |
 | `GET` | `/api/auth/me` | Current user profile |
 | `PATCH` | `/api/auth/me` | Update profile (name, email, password, wallet address, avatar) |
 
@@ -152,7 +152,7 @@ All routes require a `Bearer` JWT token.
 |---|---|---|
 | `POST` | `/api/requests` | Create a payment request (ask another user to pay you) |
 | `GET` | `/api/requests` | List incoming and outgoing asks for the current user |
-| `POST` | `/api/requests/:id/fulfill` | Payer accepts — runs quote flow and returns a `QuoteResponse` |
+| `POST` | `/api/requests/:id/fulfill` | Payer accepts - runs quote flow and returns a `QuoteResponse` |
 | `POST` | `/api/requests/:id/decline` | Payer declines |
 | `POST` | `/api/requests/:id/cancel` | Requester cancels |
 
@@ -161,7 +161,7 @@ All routes require a `Bearer` JWT token.
 | Method | Path | Description |
 |---|---|---|
 | `GET` | `/api/news/posts` | List articles with per-reader `unlocked` flag |
-| `GET` | `/api/news/posts/:id` | Single article — body returned only when unlocked or `freeToRead` |
+| `GET` | `/api/news/posts/:id` | Single article - body returned only when unlocked or `freeToRead` |
 | `POST` | `/api/news/posts/:id/wm-unlock` | Record a Web Monetization streaming unlock |
 | `POST` | `/api/news/posts/:id/unlock` | Open Payments fallback unlock |
 
@@ -187,7 +187,7 @@ All vouchers route top-up payments to the app's configured `OP_WALLET_ADDRESS`, 
 
 ```
 voucher2/
-├── package.json                  ← workspace root — `npm run dev` starts everything
+├── package.json                  ← workspace root - `npm run dev` starts everything
 │
 ├── backend/
 │   ├── examples/
@@ -222,7 +222,7 @@ voucher2/
         ├── main.ts               ← hash router (#/login, #/pay, #/remit, …)
         ├── api.ts                ← typed fetch wrappers for every backend route
         ├── auth.ts               ← JWT storage helpers (localStorage)
-        ├── escape.ts             ← escapeHtml() — sanitise all user-entered values
+        ├── escape.ts             ← escapeHtml() - sanitise all user-entered values
         ├── money.ts              ← currency formatting helpers
         ├── styles.css            ← edit :root vars to rebrand
         └── views/
@@ -243,12 +243,12 @@ voucher2/
 
 Six tables in `backend/src/db/schema.ts`:
 
-- **`users`** — JWT auth (bcrypt password hash), optional wallet address and avatar.
-- **`transactions`** — tracks the Open Payments flow: `PENDING → AWAITING_GRANT → COMPLETED | FAILED`. Stores GNAP continuation details between `/consent` and `/callback`.
-- **`payment_requests`** — peer-to-peer asks: `PENDING → COMPLETED | DECLINED | CANCELLED`. A failed payment leaves the row `PENDING` so the payer can retry.
-- **`vouchers`** — gift card registry. Balance in ZAR cents. Status: `ACTIVE | DEPLETED | EXPIRED`.
-- **`posts`** — news articles with a paywall. Supports one-off unlock and streaming Web Monetization.
-- **`post_unlocks`** — one row per (post, user). Method: `WEB_MONETIZATION` or `OPEN_PAYMENTS`.
+- **`users`** - JWT auth (bcrypt password hash), optional wallet address and avatar.
+- **`transactions`** - tracks the Open Payments flow: `PENDING → AWAITING_GRANT → COMPLETED | FAILED`. Stores GNAP continuation details between `/consent` and `/callback`.
+- **`payment_requests`** - peer-to-peer asks: `PENDING → COMPLETED | DECLINED | CANCELLED`. A failed payment leaves the row `PENDING` so the payer can retry.
+- **`vouchers`** - gift card registry. Balance in ZAR cents. Status: `ACTIVE | DEPLETED | EXPIRED`.
+- **`posts`** - news articles with a paywall. Supports one-off unlock and streaming Web Monetization.
+- **`post_unlocks`** - one row per (post, user). Method: `WEB_MONETIZATION` or `OPEN_PAYMENTS`.
 
 ---
 
@@ -266,7 +266,7 @@ Run inside `backend/` or `frontend/` to target a single package.
 
 ## Open Payments SDK Reference
 
-The SDK client singleton lives in `backend/src/lib/openPayments.ts`. The shared quote flow is in `backend/src/lib/quoteFlow.ts`. A standalone walkthrough script (no web server or DB) is at `backend/examples/p2p-open-payments-walkthrough.ts` — a good starting point for understanding the SDK patterns.
+The SDK client singleton lives in `backend/src/lib/openPayments.ts`. The shared quote flow is in `backend/src/lib/quoteFlow.ts`. A standalone walkthrough script (no web server or DB) is at `backend/examples/p2p-open-payments-walkthrough.ts` - a good starting point for understanding the SDK patterns.
 
 Key patterns used throughout the codebase:
 
@@ -305,6 +305,6 @@ const final = await client.grant.continue(
 | Problem | Fix |
 |---|---|
 | `Missing required environment variable: OP_WALLET_ADDRESS` | Copy `backend/.env.example` to `backend/.env` and fill in credentials |
-| `Grant continuation did not return an access token` | Consent was denied, expired, or already used — restart from the quote step |
+| `Grant continuation did not return an access token` | Consent was denied, expired, or already used - restart from the quote step |
 | Frontend can't reach backend | Check `VITE_BACKEND_URL` in `frontend/.env` (default: `http://localhost:3001`) |
-| Voucher balance not deducted | The ILP top-up may have failed — the voucher is left intact; retry the payment |
+| Voucher balance not deducted | The ILP top-up may have failed - the voucher is left intact; retry the payment |
